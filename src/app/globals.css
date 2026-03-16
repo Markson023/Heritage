@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@theme {
+  --color-heritage-50: #fbf8f4;
+  --color-heritage-100: #f3efe6;
+  --color-heritage-200: #e2d1bc;
+  --color-heritage-300: #d0b08e;
+  --color-heritage-400: #bf8d5d;
+  --color-heritage-500: #b0733d;
+  --color-heritage-600: #9e5b32;
+  --color-heritage-700: #84472c;
+  --color-heritage-800: #6b3b26;
+  --color-heritage-900: #573121;
+  --color-heritage-950: #2d170e;
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+
+  body {
+    background-color: var(--color-heritage-50);
+    color: var(--color-heritage-950);
+  }
+}
