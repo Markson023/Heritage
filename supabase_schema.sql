@@ -114,11 +114,7 @@ with check ( auth.uid() = id );
 create policy "Users view families they belong to"
 on public.families for select
 using (
-exists (
-select 1 from public.family_members 
-where family_members.family_id = families.id 
-and family_members.user_id = auth.uid()
-)
+  admin_id = auth.uid() or public.is_in_family(id)
 );
 
 create policy "Users can create a family space"
@@ -133,39 +129,19 @@ using ( admin_id = auth.uid() );
 create policy "Users view members of their families"
 on public.family_members for select
 using (
-exists (
-select 1 from public.family_members as my_members 
-where my_members.family_id = family_members.family_id 
-and my_members.user_id = auth.uid()
-)
-or
-exists (
-select 1 from public.families
-where families.id = family_members.family_id
-and families.admin_id = auth.uid()
-)
+  user_id = auth.uid() or public.is_in_family(family_id)
 );
 
 create policy "Users can insert members into their families"
 on public.family_members for insert
 with check (
-exists (
-select 1 from public.families
-where families.id = family_members.family_id
-and families.admin_id = auth.uid()
-)
-or
-exists (
-select 1 from public.family_members as my_members 
-where my_members.family_id = family_members.family_id 
-and my_members.user_id = auth.uid()
-)
+  public.is_in_family(family_id)
 );
 
 -- Helper function
 create or replace function public.is_in_family(f_id uuid)
 returns boolean
-language sql security definer
+language sql security definer set search_path = public
 as $$
 select exists (
 select 1 
